@@ -44,15 +44,32 @@ export default function About() {
     }
   };
 
+  const onCancel = () => {
+    navigate('/clientlayout/marchepublic');
+  };
+
   return (
     <>
-      <div className="py-6 mx-auto max-w-7xl sm:px-6 lg:px-8">
+
+      <div className="mx-auto max-w-5xl rounded-xl sm:px-6 lg:px-8 bg-white shadow-xl">
         <div>
           {error && (
             <div className="bg-red-500 text-white p-4 mt-4">
               <p>{error}</p>
             </div>
           )}
+          <div className="pb-12 border-b border-gray-900/10">
+                <h2 className="mt-3 text-2xl font-bold leading-9 tracking-tight text-center text-gray-900">
+                  Ajouter Marche publics
+                </h2>
+                <h2 className="text-base font-semibold leading-7 text-center text-gray-900">
+                  Avertissement!!
+                </h2>
+                <p className="mt-0 text-sm leading-6 text-center text-gray-600">
+                  Veuillez bien verifier vos informations que vous faites entrer
+                  dans les formulaires avant de les valider
+                </p>
+              </div>
           <div className="px-4 sm:px-0">
             <h3 className="text-base font-semibold leading-7 text-center text-gray-900">
               Information du marche publics
@@ -534,16 +551,17 @@ export default function About() {
               <div className="flex items-center justify-end mt-6 gap-x-6">
                 <button
                   type="submit"
-                  className="px-3 py-2 text-sm font-semibold text-white bg-indigo-600 rounded-md shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                >
-                  Annuler
-                </button>
-                <button
-                  type="submit"
                   onClick={(e) => onsubmitChange(e)}
                   className="px-3 py-2 text-sm font-semibold text-white bg-red-500 rounded-md shadow-sm hover:bg-red-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                 >
                   Enregistrer
+                </button>
+                <button
+                  type="submit"
+                  onClick={onCancel}
+                  className="px-3 py-2 text-sm font-semibold text-white bg-indigo-600 rounded-md shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                >
+                  Annuler
                 </button>
               </div>
             </dl>

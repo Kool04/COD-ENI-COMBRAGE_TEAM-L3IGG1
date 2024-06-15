@@ -3,12 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\LoginRequest;
+use App\Http\Requests\LoginAdmi;
 use App\Http\Requests\LoginClientRequest;
 use App\Http\Requests\SignupRequest;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Entite;
 use App\Models\Test;
+use App\Models\Login;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -24,7 +26,7 @@ class AuthController extends Controller
         $user = User::create([
             'name' => $data['name'],
             'email' => $data['email'],
-            'password' =>$data['password'],
+            'password' => $data['password'],
         ]);
         $token = $user->createToken('main')->plainTextToken;
 
@@ -34,10 +36,11 @@ class AuthController extends Controller
         ]);
     }
 
+
     public function login(LoginRequest $request)
     {
         $credentials = $request->validated();
-        unset($credentials['remember']);
+        $remember = $request->boolean('remember_token');
 
         $user = Test::where('nif', $credentials['nif'])->first();
 
@@ -45,15 +48,21 @@ class AuthController extends Controller
             return response([
                 'error' => 'The provided credentials are not correct'
             ], 422);
+        }
+        if ($remember) {
+            auth()->login($user, true); // Crée une session persistante
+        } else {
+            auth()->login($user); // Crée une session normale
+        }
+        // Créez un token seulement si l'authentification réussit
+        $token = $user->createToken('main')->plainTextToken;
+
+        return response([
+            'user' => $user,
+            'token' => $token
+        ]);
     }
 
-    $token = $user->createToken('main')->plainTextToken;
-
-    return response([
-        'user' => $user,
-        'token' => $token
-    ]);
-    }
 
     public function logout(Request $request)
     {
@@ -67,7 +76,7 @@ class AuthController extends Controller
         ]);
     }
 
-    public function count_paye ($nif)
+    public function count_paye($nif)
     {
         $count = DB::table('marche_public')->where('nif_fournisseur', $nif)->where('statut', 'payé')->count();;
         return response()->json(['counts' => $count]);
@@ -76,5 +85,32 @@ class AuthController extends Controller
     public function me(Request $request)
     {
         return $request->user();
+    }
+
+    public function loginAdmi(LoginAdmi $request)
+    {
+        $credentials = $request->validated();
+        unset($credentials['remember']);
+
+        $user = Login::where('utilisateur', $credentials['utilisateur'])->first();
+
+        if (!$user) {
+            return response([
+                'utilisateur' => 'Employer introuvable'
+            ], 422);
+        }
+
+        if ($user->mdp !== $credentials['mdp']) {
+            return response([
+                'password' => 'Mot de passe incorrecte'
+            ], 422);
+        }
+
+        $token = $user->createToken('main')->plainTextToken;
+
+        return response([
+            'user' => $user,
+            'token' => $token
+        ]);
     }
 }

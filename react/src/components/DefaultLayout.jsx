@@ -66,7 +66,7 @@ export default function DefaultLayout() {
           className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8"
         >
           <div className="border-b border-gray-200">
-            <div className="flex items-center h-16">
+            <div className="flex items-center h-16 ">
               <button
                 type="button"
                 className="relative p-2 text-gray-400 bg-white rounded-md lg:hidden"

@@ -13,31 +13,34 @@ use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use App\Mail\email;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 
 class ClientController extends Controller
 {
-    public function loginClient(LoginClientRequest $request){
-       // dd('Reached loginClient method');
+
+    public function loginClient(LoginClientRequest $request)
+    {
+        // dd('Reached loginClient method');
 
         $credentials = $request->validated();
         unset($credentials['remember']);
 
-        $user =User::where('email', $credentials['email'])->first();
+        $user = User::where('email', $credentials['email'])->first();
 
         if (!$user || $user->password !== $credentials['password']) {
             return response([
                 'error' => 'The provided credentials are not correct'
             ], 422);
+        }
+
+        $token = $user->createToken('main')->plainTextToken;
+
+        return response([
+            'user' => $user,
+            'token' => $token
+        ]);
     }
-
-    $token = $user->createToken('main')->plainTextToken;
-
-    return response([
-        'user' => $user,
-        'token' => $token
-    ]);
-    }
-
 
     public function me(Request $request)
     {
@@ -48,12 +51,12 @@ class ClientController extends Controller
     {
         $results = DB::table('marche_public')->get();
 
-             return response()->json([
+        return response()->json([
             'results' => $results
-       ],200);
+        ], 200);
     }
 
-   public function sendNotification(Request $request)
+    public function sendNotification(Request $request)
     {
         try {
             $request->validate([
@@ -97,8 +100,8 @@ class ClientController extends Controller
         $nif = intval($nif);
         $marches = DB::table('notification_client')->where('nif', $nif)->get();
         return response()->json([
-            'results'=> $marches
-        ],200);
+            'results' => $marches
+        ], 200);
 
         if (!$marches) {
             return response()->json([
@@ -133,7 +136,8 @@ class ClientController extends Controller
         ], 200);
     }
 
-    public function supprimer($id){
+    public function supprimer($id)
+    {
 
         try {
             $numero = intval($id);
@@ -163,15 +167,72 @@ class ClientController extends Controller
         $to = 'koloina.kol04@gmail.com'; // Remplacez ceci par l'adresse e-mail réelle
 
         Mail::to($to)->send(new email());
-
     }
 
-    public function count_marche ($nif)
+    public function count_marche($nif)
     {
         $count = DB::table('marche_public')->where('nif_fournisseur', $nif)->count();
         return response()->json(['count' => $count]);
     }
 
+    public function sendMess(Request $request)
+    { {
+            // Validation des données entrantes
+            $validatedData = $request->validate([
+                'id_sent' => 'required|string',
+                'id_receiv' => 'required|string',
+                'message' => 'required|string',
+            ]);
 
+            // Insérer le message dans la base de données
+            DB::table('message')->insert([
+                'id_sent' => $validatedData['id_sent'],
+                'id_receiv' => $validatedData['id_receiv'],
+                'message' => $validatedData['message'],
+                'date' => now(),
+            ]);
 
+            // Retourner une réponse JSON
+            return response()->json(['message' => 'Message sent successfully'], 200);
+        }
+    }
+
+    public function indexMess()
+    {
+        $marches = DB::table('message')->get();
+
+        return response()->json([
+            'results' => $marches
+        ], 200);
+    }
+
+    public function indexMessage($id_sent, $id_receiv)
+    {
+        // Convertir en entier
+        $id_sent = intval($id_sent);
+        $id_receiv = intval($id_receiv);
+
+        // Récupérer les messages échangés entre id_sent et id_receiv
+        $mess = DB::table('message')
+            ->where(function ($query) use ($id_sent, $id_receiv) {
+                $query->where('id_sent', $id_sent)
+                    ->where('id_receiv', $id_receiv);
+            })
+            ->orWhere(function ($query) use ($id_sent, $id_receiv) {
+                $query->where('id_sent', $id_receiv)
+                    ->where('id_receiv', $id_sent);
+            })
+            ->get();
+
+        if ($mess->isEmpty()) {
+            return response()->json([
+                'code' => 404,
+                'message' => 'Aucun message trouvé entre les utilisateurs ' . $id_sent . ' et ' . $id_receiv,
+            ], 404);
+        }
+
+        return response()->json([
+            'results' => $mess,
+        ], 200);
+    }
 }

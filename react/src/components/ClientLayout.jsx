@@ -1,4 +1,5 @@
 import { Fragment, useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import {
   Bars3Icon,
@@ -26,6 +27,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { NavLink, Outlet, Navigate, useNavigate } from "react-router-dom";
 import { useStateContext } from "../contexts/ContextProvider";
+import Swal from 'sweetalert2';
 //import axiosClient from "../axios";
 import axios from "axios";
 import { Dialog } from "@headlessui/react";
@@ -127,13 +129,29 @@ export default function ClientLayout() {
   if (!userToken) {
     return <Navigate to="/loginclient" />;
   }
+  const logout = (e) => {
+    e.preventDefault();
+    Swal.fire({
+      title: 'Êtes-vous sûr?',
+      text: "Voullez vous vraiment vous déconnecter",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Déconnecter'
+    }).then((result) => {
+      if (result.isConfirmed) {
 
-  const logout = () => {
-    navigate("/loginClient");
+    navigate("/loginClient"); }
+    });
   };
 
+
   return (
-    <>
+    <motion.div
+            initial={{ opacity: 0, y: -40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1.51 }}>
       <div className="min-h-full">
         <Disclosure as="nav" className="bg-gray-800">
           {({ open }) => (
@@ -301,8 +319,9 @@ export default function ClientLayout() {
                                   "block px-4 py-2 text-sm text-gray-700"
                                 }
                               >
-                                Sign out
-                              </a>
+
+                                Se déconnecter
+                                      </a>
                             </Menu.Item>
                           </Menu.Items>
                         </Transition>
@@ -516,7 +535,13 @@ export default function ClientLayout() {
                     >
                       <span className="absolute -inset-1.5" />
                       <span className="sr-only">View notifications</span>
-                      <BellIcon className="w-6 h-6" aria-hidden="true" />
+                      <div className="flex items-center">
+                        <EnvelopeIcon
+                          className="w-6 h-6 mr-2 text-white rounded-full"
+                          aria-hidden="true"
+                        />
+                        <BellIcon className="w-6 h-6 text-white rounded-full" />
+                      </div>
                     </button>
                   </div>
 
@@ -541,6 +566,6 @@ export default function ClientLayout() {
 
         <Outlet />
       </div>
-    </>
+      </motion.div>
   );
 }

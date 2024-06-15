@@ -1,10 +1,14 @@
 //import React from "react";
+import {
+  ArrowLeftIcon,
+} from "@heroicons/react/20/solid";
 import axios from "axios";
 import html2pdf from "html2pdf.js";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useStateContext } from "../contexts/ContextProvider";
 import QRCode from "qrcode.react";
+import Swal from 'sweetalert2';
 
 export default function Pdf() {
   const contentWidth = 190;
@@ -36,6 +40,24 @@ export default function Pdf() {
     fetchUser();
   }, [numero_marche]);
 
+
+  const onPrec = (e) => {
+    e.preventDefault();
+    Swal.fire({
+      title: 'Êtes-vous sûr?',
+      text: "Vous allez revenir à la page précédente!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Oui, revenir en arrière!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        window.history.back();
+      }
+    });
+  };
+
   const fetchUser = async () => {
     try {
       const result = await axios.get(
@@ -51,6 +73,20 @@ export default function Pdf() {
 
   return (
     <div>
+      <div
+        style={{
+          borderRadius: 30,
+          position: "fixed",
+          top: 15,
+          left: 15,
+          width: 40,
+          height: 40,
+          backgroundColor: "#444",
+        }}
+        onClick={onPrec}
+      >
+        <ArrowLeftIcon className="w-7 h-7 m-2 text-white" aria-hidden="true" />
+      </div>
       {error && (
         <div className="bg-red-500 text-white p-4 mt-4">
           <p>{error}</p>

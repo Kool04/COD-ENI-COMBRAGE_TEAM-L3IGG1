@@ -136,7 +136,7 @@ export default function Marchepublic() {
               <span className="hidden ml-3 sm:block">
                 <button
                   type="button"
-                  className="flex items-center px-3 py-2 text-sm font-semibold text-gray-900 bg-white rounded-md shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                  className="flex items-center px-3 py-2 text-sm font-semibold text-white bg-blue-600 rounded-md shadow-sm hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                 >
                   <PlusIcon
                     className="-ml-0.5 mr-1.5 h-5 w-5"
@@ -188,7 +188,7 @@ export default function Marchepublic() {
         </div>
       </header>
       <main>
-        <div className="max-w-sm mx-auto sm:px-6 lg:px-8">
+        <div className="max-w-sm mx-auto sm:px-6 lg:px-8 mr-5">
           <SearchBar
             placeholder="recherche..."
             data={allUsers}
@@ -197,7 +197,7 @@ export default function Marchepublic() {
           />
         </div>
 
-        <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-5xl rounded-xl sm:px-6 lg:px-8 bg-white shadow-xl">
           <ul role="list" className="divide-y divide-gray-100">
             {(filteredUsers.length > 0 ? filteredUsers : allUsers)
               .filter(

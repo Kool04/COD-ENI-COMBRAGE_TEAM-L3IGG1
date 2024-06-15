@@ -3,7 +3,8 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useStateContext } from "../contexts/ContextProvider";
 import { Dialog, Transition } from "@headlessui/react";
-import { CheckIcon } from "@heroicons/react/20/solid";
+import { CheckIcon ,
+  ArrowLeftIcon, } from "@heroicons/react/20/solid";
 
 export default function Enregistrement() {
   const [userField, setUserField] = useState({
@@ -31,6 +32,10 @@ export default function Enregistrement() {
     pourcentage: "",
   });
 
+  const onPrec = (e) => {
+    e.preventDefault();
+    window.history.back();
+  };
   const navigate = useNavigate();
   const { currentUser } = useStateContext();
   const [isOpen, setIsOpen] = useState(false);
@@ -95,9 +100,30 @@ export default function Enregistrement() {
       console.log(err.config);
     }
   };
+
+  const onCancel = () => {
+    navigate("/clientlayout/marchepublic");
+  };
+  const Annuler = () => {
+    setIsOpen(false);
+  };
+
   return (
     <>
-      <main>
+      <main><div
+        style={{
+          borderRadius: 30,
+          position: "fixed",
+          top: 15,
+          left: 15,
+          width: 40,
+          height: 40,
+          backgroundColor: "#444",
+        }}
+        onClick={onPrec}
+      >
+        <ArrowLeftIcon className="w-7 h-7 m-2 text-white" aria-hidden="true" />
+      </div>
         <div className="py-2 mx-auto max-w-7xl sm:px-6 lg:px-8">
           <form>
             <div className="flex ml-4 lg:ml-0"></div>
@@ -115,7 +141,7 @@ export default function Enregistrement() {
                 </p>
               </div>
 
-              <div className="pb-12 border-b border-gray-900/10">
+              <div className="mx-auto max-w-5xl rounded-xl sm:px-6 lg:px-8 bg-white shadow-xl">
                 <h2 className="text-base font-semibold leading-7 text-center text-gray-900">
                   Information a propos du marche Publics
                 </h2>
@@ -395,6 +421,24 @@ export default function Enregistrement() {
                         className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                       />
                     </div>
+                    <div className="flex items-center justify-end mt-6 gap-x-6">
+                    <button
+                        type="button"
+                        onClick={() => {
+                          openModal();
+                        }}
+                        className="px-3 py-2 text-sm font-semibold text-white bg-indigo-600 rounded-md shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                      >
+                        Enregistrer
+                      </button>
+                      <button
+                        onClick={onCancel}
+                        type="button"
+                        className="text-sm font-semibold leading-6 text-gray-900 bg-indigo-100 rounded-md shadow-sm hover:bg-indigo-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-100 pr-6 pl-5 "
+                      >
+                        Annuler
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -460,9 +504,7 @@ export default function Enregistrement() {
                           <button
                             type="button"
                             className="inline-flex justify-center px-4 py-2 mx-4 text-sm font-medium text-red-900 bg-red-100 border border-transparent rounded-md hover:bg-red-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
-                            onClick={() => {
-                              closeModal();
-                            }}
+                            onClick={Annuler}
                           >
                             Annuler
                           </button>
@@ -473,24 +515,6 @@ export default function Enregistrement() {
                 </div>
               </Dialog>
             </Transition>
-
-            <div className="flex items-center justify-end mt-6 gap-x-6">
-              <button
-                type="button"
-                className="text-sm font-semibold leading-6 text-gray-900"
-              >
-                Annuler
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  openModal();
-                }}
-                className="px-3 py-2 text-sm font-semibold text-white bg-indigo-600 rounded-md shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-              >
-                Enregistrer
-              </button>
-            </div>
           </form>
         </div>
         <Transition appear show={isOpen2} as={Fragment}>
@@ -621,7 +645,7 @@ export default function Enregistrement() {
                         className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
                         onClick={closeModal2}
                       >
-                        Got it, thanks!
+                        Lu, Continuer!
                       </button>
                     </div>
                   </Dialog.Panel>

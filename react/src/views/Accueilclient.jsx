@@ -1,4 +1,5 @@
 import { GlobeAltIcon } from "@heroicons/react/20/solid";
+import { motion } from "framer-motion";
 
 import { Helmet } from "react-helmet";
 import Slider from "react-slick";
@@ -19,8 +20,12 @@ const MySlider = () => {
     autoplaySpeed: 7000,
   };
 
-  return (
+  return (<motion.div
+            initial={{ opacity: 0, y: -60 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.91 }}>
     <Slider {...settings}>
+
       <img
         src="/taxe4.jpg"
         alt="taxe4"
@@ -50,6 +55,7 @@ const MySlider = () => {
         height={1442}
       />
     </Slider>
+    </motion.div>
   );
 };
 
@@ -84,7 +90,10 @@ export default function Accueilclient() {
       <div className="py-10 overflow-hidden bg-white sm:py-20">
         <div className="px-6 mx-auto max-w-7xl lg:px-8">
           <div className="grid max-w-2xl grid-cols-1 mx-auto gap-x-8 gap-y-16 sm:gap-y-20 lg:mx-0 lg:max-w-none lg:grid-cols-2">
-            <div className="lg:pr-8 lg:pt-4">
+          <motion.div
+            initial={{ opacity: 0, y: -60 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1.51 }}>
               <div className="lg:max-w-lg">
                 <h2 className="text-base font-semibold leading-7 text-indigo-600">
                   Hetra Online
@@ -96,21 +105,21 @@ export default function Accueilclient() {
                 <p className="mt-6 text-lg leading-8 text-gray-600">
                   Simple,Rapide et Securise
                 </p>
-                <dl className="max-w-xl mt-10 space-y-8 text-base leading-7 text-gray-600 lg:max-w-none">
+                <dl className="max-w-xl mt-10 space-y-8 text-base leading-7 text-gray-600 lg:max-w-none" style={{backgroundColor:"#4B5563", borderRadius:"2rem", width:"45%"}}>
                   <div className="relative pl-9">
                     <dt className="inline font-semibold text-gray-900">
                       <GlobeAltIcon
                         className="absolute w-5 h-5 text-indigo-600 left-1 top-1"
                         aria-hidden="true"
+                        style={{color:"white"}}
                       />
                     </dt>{" "}
                     <dd className="inline">
-                      <h1>Marche Public: {count}</h1>
+                      <h1 style={{color:"white"}}>Marche Public: {count}</h1>
                     </dd>
                   </div>
                 </dl>
-              </div>
-            </div>
+              </div></motion.div>
             <MySlider />
           </div>
         </div>

@@ -8,6 +8,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useStateContext } from "../contexts/ContextProvider";
+import Swal from 'sweetalert2';
 //import { Dialog, Transition } from "@headlessui/react";
 //import { Fragment, useState } from "react";
 
@@ -29,15 +30,33 @@ export default function AdmiLayout() {
   const openLogoutModal = () => setLogoutModalOpen(true);
   const closeLogoutModal = () => setLogoutModalOpen(false);
 
-  const logout = () => {
+  const logout = (e) => {
+    e.preventDefault();
+    Swal.fire({
+      title: 'Êtes-vous sûr?',
+      text: "Voullez vous vraiment vous déconnecter",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Déconnecter'
+    }).then((result) => {
+      if (result.isConfirmed) {
+
     closeLogoutModal();
-    navigate("/loginAdmi");
+    navigate("/loginAdmi"); }
+    });
   };
+
+
+
+
+
 
   return (
     <>
       <div className="min-h-full">
-        <Disclosure as="nav" className="bg-red-800">
+        <Disclosure as="nav" className="bg-gray-800">
           {({ open }) => (
             <>
               <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
@@ -61,7 +80,7 @@ export default function AdmiLayout() {
                             className={({ isActive }) =>
                               classNames(
                                 isActive
-                                  ? "bg-red-900 text-white"
+                                  ? "bg-gray-900 text-white"
                                   : "text-gray-300 hover:bg-gray-700 hover:text-white",
                                 "rounded-md px-3 py-2 text-sm font-medium"
                               )
@@ -78,7 +97,7 @@ export default function AdmiLayout() {
                       <button
                         type="button"
                         onClick={openLogoutModal}
-                        className="relative p-1 text-gray-400 bg-red-800 rounded-full hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+                        className="relative p-1 text-gray-400 bg-gray-800 rounded-full hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
                       >
                         <span className="absolute -inset-1.5" />
                         <span className="sr-only">View notifications</span>
@@ -88,7 +107,7 @@ export default function AdmiLayout() {
                       {/* Profile dropdown */}
                       <Menu as="div" className="relative ml-3">
                         <div>
-                          <Menu.Button className="relative p-1 text-gray-400 bg-red-800 rounded-full hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+                          <Menu.Button className="relative p-1 text-gray-400 bg-gray-800 rounded-full hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                             <span className="absolute -inset-1.5" />
                             <span className="sr-only">Open user menu</span>
                             <ShieldCheckIcon className="w-6 h-6 text-white rounded-full" />
@@ -112,7 +131,7 @@ export default function AdmiLayout() {
                                   "block px-4 py-2 text-sm text-gray-700"
                                 }
                               >
-                                Sign out
+                            Se déconnecter
                               </a>
                             </Menu.Item>
                           </Menu.Items>
@@ -150,7 +169,7 @@ export default function AdmiLayout() {
                       className={({ isActive }) =>
                         classNames(
                           isActive
-                            ? "bg-red-900 text-white"
+                            ? "bg-gray-900 text-white"
                             : "text-gray-300 hover:bg-gray-700 hover:text-white",
                           "block rounded-md px-3 py-2 text-base font-medium"
                         )
@@ -245,7 +264,7 @@ export default function AdmiLayout() {
                             </button>
                             <button
                               type="button"
-                              className="inline-flex justify-center px-4 py-2 text-sm font-medium text-white bg-red-500 border border-transparent rounded-md hover:bg-red-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
+                              className="inline-flex justify-center px-4 py-2 text-sm font-medium text-white bg-gray-500 border border-transparent rounded-md hover:bg-gray-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2"
                               onClick={logout}
                             >
                               Déconnecter

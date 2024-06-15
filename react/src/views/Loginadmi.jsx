@@ -1,47 +1,119 @@
-import { LockClosedIcon } from "@heroicons/react/20/solid";
+import { motion } from "framer-motion";
+import {
+  ArrowLeftOnRectangleIcon,
+  ArrowLeftIcon,
+  EyeIcon,
+  EyeSlashIcon,
+} from "@heroicons/react/20/solid";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
+import Swal from 'sweetalert2';
+import axiosClient from "../axios";
 import { useStateContext } from "../contexts/ContextProvider";
 
 export default function Login() {
-  const { setCurrentUser } = useStateContext();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const { setCurrentUser, setUserToken } = useStateContext();
+  const [utilisateur, setUtilisateur] = useState("");
+  const [mdp, setMdp] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState({ __html: "" });
   const navigate = useNavigate();
 
+  const onPrec = (e) => {
+    e.preventDefault();
+    Swal.fire({
+      title: 'Êtes-vous sûr?',
+      text: "Vous allez revenir à la page précédente!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Oui, revenir en arrière!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        window.history.back();
+      }
+    });
+  };
+
   const onSubmit = (ev) => {
     ev.preventDefault();
-    setError({ __html: "" });
+    setError({ email: "", password: "" });
 
-    // Vérifier les conditions d'authentification simulée
-    if (email !== "Koloina04" || password !== "@Koloina04") {
-      setError({ __html: "Informations incorrectes" });
-      return;
-    }
+    axiosClient
+      .post("/loginAdmi", {
+        utilisateur,
+        mdp,
+      })
+      .then(({ data }) => {
+        setCurrentUser(data.user);
+        setUserToken(data.token);
+        Swal.fire({
+          title: 'Succès!',
+          text: 'Connexion réussie',
+          icon: 'success',
+          confirmButtonText: 'Ok'
+        });
+        navigate("/admilayout");
+      })
+      .catch((error) => {
+        if (error.response && error.response.data) {
+          const finalErrors = Object.values(error.response.data.errors || {}).reduce(
+            (accum, next) => [...accum, ...next],
+            []
+          );
+          setError({ __html: finalErrors.join("<br>") });
+          Swal.fire({
+            title: 'Oupss !',
+            html: finalErrors.join("<br>"),
+            icon: 'error',
+            text: 'Verifiez votre mot de passe !',
 
-    // Authentification réussie (simulée)
-    const fakeUserData = {
-      user: {
-        /* vos données utilisateur simulées */
-      },
-    };
-
-    setCurrentUser(fakeUserData.user);
-
-    // Rediriger vers la page admilayout
-    navigate("/admilayout");
+            confirmButtonText: 'Ok'
+          });
+        } else {
+          Swal.fire({
+            title: 'Oupss !',
+            text: 'Une erreur inconnue est survenue.',
+            icon: 'error',
+            confirmButtonText: 'Ok'
+          });
+        }
+        console.error(error);
+      });
   };
 
   return (
-    <>
-      <div className="flex flex-col justify-center flex-1 min-h-full px-6 py-12 lg:px-8">
-        <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-          <h2 className="mt-10 text-2xl font-bold leading-9 tracking-tight text-center text-gray-900">
-            Login Administrateur
-          </h2>
-        </div>
+    <div className="flex justify-center items-center bg-gray-10">
+      <div
+        style={{
+          borderRadius: 30,
+          position: "fixed",
+          top: 15,
+          left: 15,
+          width: 40,
+          height: 40,
+        }}
+        onClick={onPrec}
+      >
+        <ArrowLeftIcon className="w-7 h-7 m-2 text-white" aria-hidden="true" />
+      </div>
+      <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.1 }}
+             className="bg-white p-8 rounded-lg shadow-lg w-full max-w-sm transform hover:scale-105 transition-transform duration-300 m-10" style={{ borderRadius: 30 }}>
+
+
+<motion.div
+            initial={{ opacity: 0, y: -40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.85 }}>
+        <h2 className="text-2xl font-bold text-center text-gray-900 mb-8 transform hover:scale-105 transition-transform duration-300">
+          Login Administrateur
+        </h2>
+
+        </motion.div>
 
         {error.__html && (
           <div
@@ -50,66 +122,91 @@ export default function Login() {
           ></div>
         )}
 
-        <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-          <form onSubmit={onSubmit} className="space-y-6">
-            <div>
-              <label
-                htmlFor="nif"
-                className="block text-sm font-medium leading-6 text-gray-900"
-              >
-                nom d&apos;utilisateur
-              </label>
-              <div className="mt-2">
-                <input
-                  id="email"
-                  name="email"
-                  type="text"
-                  //autoComplete="email"
-                  required
-                  value={email}
-                  onChange={(ev) => setEmail(ev.target.value)}
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                />
-              </div>
-            </div>
+        <form onSubmit={onSubmit} className="space-y-6">
+          <div>
+            <label
+              htmlFor="nif"
+              className="block text-sm font-medium leading-6 text-gray-900"
+            >
+              nom d&apos;utilisateur
+            </label>
+            <input
+              id="email"
+              name="email"
+              type="text"
+              required
+              value={utilisateur}
+              onChange={(ev) => setUtilisateur(ev.target.value)}
+              className="w-full py-2 px-3 rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 transform hover:scale-105 transition-transform duration-300"
+            />
+          </div>
 
-            <div>
-              <div className="flex items-center justify-between">
-                <label className="block text-sm font-medium leading-6 text-gray-900">
-                  Mot de passe
-                </label>
-              </div>
-              <div className="mt-2">
-                <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  autoComplete="current-password"
-                  required
-                  value={password}
-                  onChange={(ev) => setPassword(ev.target.value)}
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+          <div className="relative">
+            <label
+              htmlFor="password"
+              className="block text-sm font-medium text-gray-900"
+            >
+              Mot de passe
+            </label>
+            <input
+              id="password"
+              name="password"
+              type={showPassword ? "text" : "password"}
+              autoComplete="current-password"
+              required
+              value={mdp}
+              onChange={(ev) => setMdp(ev.target.value)}
+              className="w-full py-2 px-3 rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 transform hover:scale-105 transition-transform duration-300"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5"
+            >
+              {showPassword ? (
+                <EyeSlashIcon
+                  className="h-6 w-6 text-gray-500 mr-8 mt-9"
+                  aria-hidden="true"
                 />
-              </div>
-            </div>
+              ) : (
+                <EyeIcon
+                  className="h-6 w-6 text-gray-500 mr-8 mt-9"
+                  aria-hidden="true"
+                />
+              )}
+            </button>
+          </div>
+          <motion.div
+            initial={{ opacity: 0, y: 0 , x:80}}
+            animate={{ opacity: 1, y: 0 , x:0}}
+            transition={{ duration: 0.85 }}>
+          <button
+            type="submit"
+            className="w-full bg-indigo-600 text-white py-2 px-4 rounded-md shadow-md hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transform hover:scale-105 transition-transform duration-300"
+          >
+            <span className="flex items-center justify-center">
+              Se connecter
+              <ArrowLeftOnRectangleIcon
+                className="w-5 h-5 mr-2 ml-5"
+                aria-hidden="true"
+              />
+            </span>
+          </button>
+          </motion.div>
+        </form>
 
-            <div>
-              <button
-                type="submit"
-                className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 relative"
-              >
-                <span className="absolute inset-y-0 left-0 flex items-center pl-3">
-                  <LockClosedIcon
-                    className="w-5 h-5 text-indigo-500 group-hover:text-indigo-400"
-                    aria-hidden="true"
-                  />
-                </span>
-                Entrer
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </>
+        <p className="mt-4 text-sm text-center text-gray-500">
+          Le login est votre nom d`utilisateur, le mot de passe est celui que
+          vous avez reçu lors de la validation. <br />
+          <div className="transform hover:scale-105 transition-transform duration-300">
+            <a
+              href="#"
+              className="font-semibold text-indigo-600 hover:text-indigo-500"
+            >
+              Besoin d`aide ? Contactez-nous
+            </a>
+          </div>
+        </p></motion.div>
+    </div>
   );
 }

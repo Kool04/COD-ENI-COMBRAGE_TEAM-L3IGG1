@@ -1,3 +1,5 @@
+import { motion } from "framer-motion";
+
 export default function Accueil() {
   return (
     <div className="bg-white">
@@ -22,25 +24,39 @@ export default function Accueil() {
               </radialGradient>
             </defs>
           </svg>
-          <div className="max-w-md mx-auto text-center lg:mx-0 lg:flex-auto lg:py-32 lg:text-left">
-            <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="max-w-md mx-auto text-center lg:mx-0 lg:flex-auto lg:py-32 lg:text-left"
+          >
+               <motion.div
+            initial={{ opacity: 0, y: -60 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.9 }}>
+
+            <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl  transform hover:scale-105 transition-transform duration-300">
               Bienvenue sur HETRAONLINE
             </h2>
+            </motion.div>
             <p className="mt-6 text-lg leading-8 text-gray-300">
-              Ce site regroupe en un seul Espace les differentes
-              Fonctionnalites(Immatriculation,Paiment virtuel,Consultation de
-              situation fiscale)
+              Ce site regroupe en un seul Espace les différentes fonctionnalités (Immatriculation, Paiement virtuel, Consultation de situation fiscale).
             </p>
             <div className="flex items-center justify-center mt-10 gap-x-6 lg:justify-start">
               <a
                 href="#"
-                className="text-sm font-semibold leading-6 text-white"
+                className="text-sm font-semibold leading-6 text-white hover:text-indigo-400 transition-colors duration-300"
               >
-                Plus informations <span aria-hidden="true">→</span>
+                Plus d`informations <span aria-hidden="true">→</span>
               </a>
             </div>
-          </div>
-          <div className="relative mt-16 h-80 lg:mt-8">
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="relative mt-16 h-80 lg:mt-8"
+          >
             <img
               className="absolute left-0 top-0 w-[57rem] max-w-none rounded-md bg-white/5 ring-1 ring-white/10"
               src="/hetra3.png"
@@ -48,7 +64,7 @@ export default function Accueil() {
               width={900}
               height={1080}
             />
-          </div>
+          </motion.div>
         </div>
       </div>
     </div>

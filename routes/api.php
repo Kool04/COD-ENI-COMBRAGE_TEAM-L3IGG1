@@ -14,18 +14,18 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-            /************route Admi***********/
-Route::post('/login', [AuthController::class, 'login']);
+/************route Admi***********/
+Route::post('/loginAdmi', [AuthController::class, 'loginAdmi']);
 Route::post('/sendnotif', [ClientController::class, 'sendNotification']);
 Route::post('/sendmail', [ClientController::class, 'sendMail']);
 Route::post('/signup', [AuthController::class, 'signup']);
 Route::post('/logout', [AuthController::class, 'logout']);
 Route::get('marche', [MarcheController::class, 'index']);
-            /************route Admi***********/
+/************route Admi***********/
 
 
-            /************route Client***********/
-Route::post('/loginClient', [ClientController::class, 'loginClient']);
+/************route Client***********/
+Route::post('/loginClient', [AuthController::class, 'login']);
 Route::get('/search', [ClientController::class, 'search']);
 Route::get('/liste/{nif}', [MarcheController::class, 'indexClient']);
 Route::get('/payment/{nif}', [PaymentController::class, 'affichepayment']);
@@ -43,6 +43,11 @@ Route::get('/recupayment', [MarcheController::class, 'recupayment']);
 Route::post('/payer', [PaymentController::class, 'payer']);
 Route::get('/count_marche/{nif}', [ClientController::class, 'count_marche']);
 Route::get('/count_paye/{nif}', [AuthController::class, 'count_paye']);
-           /************route Client***********/
 
 
+Route::post('/sendMess', [ClientController::class, 'sendMess']);
+Route::get('/mess', [ClientController::class, 'indexMess']);
+Route::get('/getmess/{id_sent}/{id_receiv}', [ClientController::class, 'indexMessage']);
+
+
+/************route Client***********/
